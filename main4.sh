@@ -134,12 +134,12 @@ then
 aws sns publish --topic-arn "$sns_topic_arn" --message "Welcome to Katonic!!!"
 
 #Set the environment variable
-echo "export Env_email_var=$DEFAULT_USER_EMAIL">>~/.bashrc
-echo Env_email_var=$DEFAULT_USER_EMAIL>>~/.profile
+sudo echo "export Env_email_var=$DEFAULT_USER_EMAIL">>~/.bashrc
+sudo echo Env_email_var=$DEFAULT_USER_EMAIL>>~/.profile
 sudo echo Env_email_var=$DEFAULT_USER_EMAIL>>/etc/environment
-. ~/.bashrc
-. ~/.profile
-source ~/.bashrc
+sudo . ~/.bashrc
+sudo . ~/.profile
+sudo source ~/.bashrc
 source ~/.profile
 
 #Just for checking
@@ -574,13 +574,15 @@ cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 chmod og-wx ~/.ssh/authorized_keys 
 
 #create a directory to clone thw repo into that directory
-sudo mkdir /root/katonic-platform/
+echo "Creating directory"
+sudo mkdir /root/katonic-platform
 
 #git clone --branch with-minio https://raj-katonic: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@github.com/katonic-dev/platform_deployment_community.git /root/katonic
-git clone --single-branch --branch platform-deployment https://github.com/katonic-dev/platform-deployment-aws.git /root/katonic-platform/
+echo "clone repo"
+git clone --single-branch --branch platform-deployment https://github.com/katonic-dev/platform-deployment-aws.git /root/katonic-platform
 #cp /deploy.yaml .
 echo -e "${GREEN}Copying deploy.yaml to your current directory ${ENDCOLOR}"
-cp /root/katonic-platform/platform-deployment-aws/deploy.yaml /root/katonic
+cp /root/katonic-platform/platform-deployment-aws/deploy.yaml /root/katonic-platform
 
 #Installing Ansible dependencies
 echo -e "${GREEN}Deploying some ansible dependencies......... ${ENDCOLOR}"
@@ -591,7 +593,7 @@ echo -e "${Yellow}Wait for 1 min${ENDCOLOR}"
 sleep 1m
 #Run the playbook to deploy the platform
 echo -e "${GREEN}Now platform is deploying......... ${ENDCOLOR}"
-ansible-playbook -b /root/katonic/deploy.yaml
+ansible-playbook -b /root/katonic-platform/deploy.yaml
 
 #Default user creation
 
