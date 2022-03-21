@@ -478,7 +478,7 @@ aws ec2 create-key-pair --key-name $SSHKey --query 'KeyMaterial' --output text >
 aws cloudformation create-stack --stack-name ${StackName} --template-body file://${YAML} --parameters file://parameters.json
 
 echo -e "${GREEN}Katonic VPC is creating (takes 5 min to create).........${ENDCOLOR}"
-sleep 5m 30s
+sleep 4m
 
 
 export Region
@@ -559,7 +559,6 @@ then
     sudo yum install -y python3 python3-pip
     sudo yum install ansible -y
     sudo ansible --version
-    B
 fi
 
 cat > /etc/ansible/hosts << 'EOF'
@@ -578,11 +577,14 @@ echo "Creating directory"
 sudo mkdir /root/katonic-platform
 
 echo "clone repo"
-git clone --single-branch --branch platform-deployment https://santosh-shetkar-katonic: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@github.com/katonic-dev/platform-deployment-aws.git /root/katonic-platform
+git clone --single-branch --branch platform-deployment https://santosh-shetkar-katonic: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@github.com/katonic-dev/platform-deployment-aws.git /root/katonic-platform
 #git clone https://raj-katonic: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@github.com/katonic-dev/katonic-ai-pipeline.git {{ master_dir }}/katonic-ai-pipeline
 
+echo -e "${Yellow}Wait for 1 min${ENDCOLOR}"
+sleep 1m
+
 echo -e "${GREEN}Copying deploy.yaml to your current directory ${ENDCOLOR}"
-cp /root/katonic-platform/platform-deployment-aws/deploy.yaml /root/katonic-platform
+cp /root/katonic-platform/deploy.yaml /root
 
 #Installing Ansible dependencies
 echo -e "${GREEN}Deploying some ansible dependencies......... ${ENDCOLOR}"
@@ -593,7 +595,7 @@ echo -e "${Yellow}Wait for 1 min${ENDCOLOR}"
 sleep 1m
 #Run the playbook to deploy the platform
 echo -e "${GREEN}Now platform is deploying......... ${ENDCOLOR}"
-ansible-playbook -b /root/katonic-platform/deploy.yaml
+ansible-playbook -b /root/deploy.yaml
 
 #Default user creation
 
@@ -646,7 +648,7 @@ then
     echo -e "${RED}eks cluster nodegroup stack deleting(it takes some time)......... ${ENDCOLOR}"
     aws cloudformation delete-stack --stack-name ${EksClusterNodegroupStack} --region us-east-1
     echo -e "${Yellow}Wait for 10 min${ENDCOLOR}"
-    sleep 10m
+    sleep 5m
     echo -e "${RED}eks cluster stack deleting(it takes some time)......... ${ENDCOLOR}"
     aws cloudformation delete-stack --stack-name ${EksClusterStack} --region us-east-1
     echo -e "${Yellow}Wait for 3 min${ENDCOLOR}"
