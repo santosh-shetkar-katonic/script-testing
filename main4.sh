@@ -110,7 +110,7 @@ export AWS_DEFAULT_REGION=${Region}
 # echo "Please re-enter your email id: "
 # read DEFAULT_USER_EMAIL_2
 
-echo -ne "${Bold_Magenta} Please enter your correct email id:  ${ENDCOLOR}"
+echo -ne "${Bold_Magenta}Please enter your correct email id:  ${ENDCOLOR}"
 read DEFAULT_USER_EMAIL
 # echo "Enter [y/n] : "
 # echo yes_or_no
@@ -137,9 +137,9 @@ aws sns publish --topic-arn "$sns_topic_arn" --message "Welcome to Katonic!!!"
 sudo echo "export Env_email_var=$DEFAULT_USER_EMAIL">>~/.bashrc
 sudo echo Env_email_var=$DEFAULT_USER_EMAIL>>~/.profile
 sudo echo Env_email_var=$DEFAULT_USER_EMAIL>>/etc/environment
-sudo . ~/.bashrc
-sudo . ~/.profile
-sudo source ~/.bashrc
+. ~/.bashrc
+. ~/.profile
+source ~/.bashrc
 source ~/.profile
 
 #Just for checking
@@ -577,10 +577,10 @@ chmod og-wx ~/.ssh/authorized_keys
 echo "Creating directory"
 sudo mkdir /root/katonic-platform
 
-#git clone --branch with-minio https://raj-katonic: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@github.com/katonic-dev/platform_deployment_community.git /root/katonic
 echo "clone repo"
-git clone --single-branch --branch platform-deployment https://github.com/katonic-dev/platform-deployment-aws.git /root/katonic-platform
-#cp /deploy.yaml .
+git clone --single-branch --branch platform-deployment https://santosh-shetkar-katonic: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@github.com/katonic-dev/platform-deployment-aws.git /root/katonic-platform
+#git clone https://raj-katonic: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@github.com/katonic-dev/katonic-ai-pipeline.git {{ master_dir }}/katonic-ai-pipeline
+
 echo -e "${GREEN}Copying deploy.yaml to your current directory ${ENDCOLOR}"
 cp /root/katonic-platform/platform-deployment-aws/deploy.yaml /root/katonic-platform
 
