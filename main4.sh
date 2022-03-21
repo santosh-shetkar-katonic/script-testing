@@ -577,7 +577,7 @@ echo "Creating directory"
 sudo mkdir /root/katonic-platform
 
 echo "clone repo"
-git clone --single-branch --branch platform-deployment https://santosh-shetkar-katonic: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@github.com/katonic-dev/platform-deployment-aws.git /root/katonic-platform
+git clone --single-branch --branch platform-deployment https://santosh-shetkar-katonic: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@github.com/katonic-dev/platform-deployment-aws.git /root/katonic-platform
 #git clone https://raj-katonic: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@github.com/katonic-dev/katonic-ai-pipeline.git {{ master_dir }}/katonic-ai-pipeline
 
 echo -e "${Yellow}Wait for 1 min${ENDCOLOR}"
@@ -648,7 +648,7 @@ then
     echo -e "${RED}eks cluster nodegroup stack deleting(it takes some time)......... ${ENDCOLOR}"
     aws cloudformation delete-stack --stack-name ${EksClusterNodegroupStack} --region us-east-1
     echo -e "${Yellow}Wait for 10 min${ENDCOLOR}"
-    sleep 5m
+    sleep 10m
     echo -e "${RED}eks cluster stack deleting(it takes some time)......... ${ENDCOLOR}"
     aws cloudformation delete-stack --stack-name ${EksClusterStack} --region us-east-1
     echo -e "${Yellow}Wait for 3 min${ENDCOLOR}"
