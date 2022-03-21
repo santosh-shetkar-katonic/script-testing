@@ -134,12 +134,12 @@ then
 aws sns publish --topic-arn "$sns_topic_arn" --message "Welcome to Katonic!!!"
 
 #Set the environment variable
-sudo echo "export Env_email_var=$DEFAULT_USER_EMAIL">>~/.bashrc
-sudo echo Env_email_var=$DEFAULT_USER_EMAIL>>~/.profile
+echo "export Env_email_var=$DEFAULT_USER_EMAIL">>~/.bashrc
+echo Env_email_var=$DEFAULT_USER_EMAIL>>~/.profile
 sudo echo Env_email_var=$DEFAULT_USER_EMAIL>>/etc/environment
-sudo . ~/.bashrc
-sudo . ~/.profile
-sudo source ~/.bashrc
+. ~/.bashrc
+. ~/.profile
+source ~/.bashrc
 source ~/.profile
 
 #Just for checking
