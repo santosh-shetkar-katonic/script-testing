@@ -13,7 +13,7 @@ Region="us-east-1"
 
 echo "Checking Katonic VPC can create in US East(N.Virginia) us-east-1 region......."
 
-VPCs=$(aws ec2 describe-vpcs --vpc-ids | grep VpcId | grep -oh "vpc-\w*" | wc -l)
+VPCs=(aws ec2 describe-vpcs --vpc-ids | grep VpcId | grep -oh "vpc-\w*" | wc -l)
   if [[ "${VPCs}" -ge "5" ]]
   then
           echo "No space to create katonic VPC's in us-east-1 region. You have already 5 VPC's"
