@@ -9,15 +9,32 @@ read choice
 
 if [[ "${choice}" == "1" ]]
 then
+
+RED="\e[31m"
+GREEN="\e[32m"
+Yellow="\e[33m"
+Magenta="\e[35m"
+BOLDGREEN="\e[1;${GREEN}m"
+Bold_Magenta="\e[1;${Magenta}m"
+ENDCOLOR="\e[0m"
+
 Region="us-east-1"
 
-echo "Checking Katonic VPC can create in US East(N.Virginia) us-east-1 region......."
+echo -e "${GREEN}Checking Katonic VPC can create in US East(N.Virginia) us-east-1 region.........${ENDCOLOR}"
 
 VPCs=$(aws ec2 describe-vpcs --vpc-ids | grep VpcId | grep -oh "vpc-\w*" | wc -l)
   if [[ "${VPCs}" -ge "5" ]]
   then
-          echo "No space to create katonic VPC's in us-east-1 region. You have already 5 VPC's"
-          echo "Choose the different region"
+          RED="\e[31m"
+          GREEN="\e[32m"
+          Yellow="\e[33m"
+          Magenta="\e[35m"
+          BOLDGREEN="\e[1;${GREEN}m"
+          Bold_Magenta="\e[1;${Magenta}m"
+          ENDCOLOR="\e[0m"
+
+          echo -e "${RED}No space to create katonic VPC's in us-east-1 region. You have already 5 VPC's in us-east-1 region ${ENDCOLOR}"
+          echo -e "${Bold_Magenta}Choose the different region ${ENDCOLOR}"
           echo "1. US East(Ohio) us-east-2"
           echo "2. US West(N.California) us-west-1"
           echo "3. US West(Oregon) us-west-2"
@@ -27,31 +44,31 @@ VPCs=$(aws ec2 describe-vpcs --vpc-ids | grep VpcId | grep -oh "vpc-\w*" | wc -l
           if [[ "${region_no}" == 1 ]]
           then
                   region_name=us-east-2
-                  echo "You select US East(Ohio) region"
+                  echo -e "${BOLDGREEN}You select US East(Ohio) region ${ENDCOLOR}"
           elif [[ "${region_no}" == 2 ]]
           then
                   region_name=us-west-1
-                  echo "You select US West(N.California) region"
+                  echo -e "${BOLDGREEN}You select US West(N.California) region ${ENDCOLOR}"
           elif [[ "${region_no}" == 3 ]]
           then
                   region_name=us-west-2
-                  echo "You select US West(Oregon) region"
+                  echo -e "${BOLDGREEN}You select US West(Oregon) region ${ENDCOLOR}"
           elif [[ "${region_no}" == 4 ]]
           then
                   region_name=ap-south-1
-                  echo "You select Asia Pacific(Mumbai) region"
+                  echo -e "${BOLDGREEN}You select Asia Pacific(Mumbai) region ${ENDCOLOR}"
           elif [[ "${region_no}" == 5 ]]
           then
                   region_name=ap-southeast-2
-                  echo "You select Asia Pacific(Sydney) region"
+                  echo -e "${BOLDGREEN}You select Asia Pacific(Sydney) region ${ENDCOLOR}"
           else
-                  echo "Please select correct number"
+                  echo -e "${RED}Please select correct number ${ENDCOLOR}"
           fi
           Region="$region_name"
 
-  else
-          echo "Creating Katonic VPC in US East(N.Virginia) us-east-1 region"
-  fi
+    else
+        echo -e "${BOLDGREEN}You have space in US East(N.Virginia) us-east-1 region to create Katonic VPC!!! ${ENDCOLOR}"
+    fi
 #check this link
 #https://ryanstutorials.net/bash-scripting-tutorial/bash-if-statements.php
 
@@ -93,41 +110,41 @@ export AWS_DEFAULT_REGION=${Region}
 # echo "Please re-enter your email id: "
 # read DEFAULT_USER_EMAIL_2
 
-echo -n "Please enter your correct email id: "
+echo -ne "${Bold_Magenta} Please enter your correct email id:  ${ENDCOLOR}"
 read DEFAULT_USER_EMAIL
 # echo "Enter [y/n] : "
 # echo yes_or_no
-echo "Your email id is:  $DEFAULT_USER_EMAIL"
+echo -e "${GREEN}Your email id is:  $DEFAULT_USER_EMAIL ${ENDCOLOR}"
 
-echo "SNS topic creating"
+echo -e "${GREEN}SNS topic creating.........${ENDCOLOR}"
 aws sns create-topic --name my-topic
 
-echo "Setting variable with sns arn"
+echo -e "${GREEN}Setting variable with sns arn.........${ENDCOLOR}"
 sns_topic_arn=`aws sns list-topics | grep my-topic -w | sed 's/TopicArn//g'| cut -c 17- | tr -d '"'`
 echo $sns_topic_arn
 
-echo "Email confirmation mail send to your Email ID. Please confirm it."
+echo -e "${RED}Email confirmation mail send to your Email ID. Please confirm it.${ENDCOLOR}"
 aws sns subscribe --topic-arn "$sns_topic_arn" --protocol email --notification-endpoint "$DEFAULT_USER_EMAIL"
 for i in {1..10}
 do
-echo "Checking confirmation...."
+echo -e "${GREEN}Checking confirmation.........${ENDCOLOR}"
 array=`aws sns list-subscriptions-by-topic --topic-arn "$sns_topic_arn" --query "Subscriptions[?SubscriptionArn=='PendingConfirmation']"`
 if [[ $array == "[]" ]]
 then
-aws sns publish --topic-arn "$sns_topic_arn" --message "******************************Welcome to Katonic!!!******************************"
+aws sns publish --topic-arn "$sns_topic_arn" --message "Welcome to Katonic!!!"
 
 #Set the environment variable
-echo "export Env_email_var=$DEFAULT_USER_EMAIL">>~/.bashrc
-echo Env_email_var=$DEFAULT_USER_EMAIL>>~/.profile
-echo Env_email_var=$DEFAULT_USER_EMAIL>>/etc/environment
-. ~/.bashrc
-. ~/.profile
-source ~/.bashrc
+sudo echo "export Env_email_var=$DEFAULT_USER_EMAIL">>~/.bashrc
+sudo echo Env_email_var=$DEFAULT_USER_EMAIL>>~/.profile
+sudo echo Env_email_var=$DEFAULT_USER_EMAIL>>/etc/environment
+sudo . ~/.bashrc
+sudo . ~/.profile
+sudo source ~/.bashrc
 source ~/.profile
 
 #Just for checking
-echo "System env var"
-echo $Env_email_var
+# echo "System env var"
+# echo $Env_email_var
 
 # Fix
 YAML="vpc.yaml"
@@ -460,7 +477,7 @@ aws ec2 create-key-pair --key-name $SSHKey --query 'KeyMaterial' --output text >
 # Create VPC Stack via Cloudformation
 aws cloudformation create-stack --stack-name ${StackName} --template-body file://${YAML} --parameters file://parameters.json
 
-echo "Katonic VPC is creating (takes 5 min to create).............."
+echo -e "${GREEN}Katonic VPC is creating (takes 5 min to create).........${ENDCOLOR}"
 sleep 5m 30s
 
 
@@ -484,22 +501,22 @@ export AWS_DEFAULT_REGION=${Region}
 
 #Kubectl and eksctl installation
 # Kubectl Installation
-echo "Installing kubectl"
+echo -e "${GREEN}Installing kubectl.........${ENDCOLOR}"
 curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
 
 chmod +x ./kubectl
-cp ./kubectl /usr/bin/kubectl
+sudo cp ./kubectl /usr/bin/kubectl
 sudo mv ./kubectl /usr/local/bin/kubectl
-mv ./kubectl /root/bin/
+
 
 # EKSCTL Installation
-echo "Installing eksctl"
+echo -e "${GREEN}Installing eksctl.........${ENDCOLOR}"
 curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
 sudo mv /tmp/eksctl /usr/bin/eksctl
 eksctl version
 
 # Eks Cluster SetUp
-echo "Creating EKS cluster(it takes 20 min to create cluster)................."
+echo -e "${GREEN}Creating EKS cluster(it takes 20 min to create cluster).........${ENDCOLOR}"
 
 eksctl create cluster \
   --name ${EksCluster} \
@@ -521,14 +538,14 @@ eksctl create cluster \
   --asg-access \
   --verbose 3
 
-echo "Your eks cluster is ready!!!"
+echo -e "${GREEN}Your katonic eks cluster is ready to deploy katonic platform on it!!!${ENDCOLOR}"
 
 sleep 1m
 #Installing some dependencies to deploy platform
 
 if [[ "${os}" == "Ubuntu" ]]
 then
-    echo "Ubuntu............................................................................"
+    echo "Ubuntu........."
     sudo apt update -y
     sudo apt install -y python3 python3-pip
     sudo apt install ansible -y
@@ -551,34 +568,30 @@ localhost
 EOF
 
 #ssh-keygen and copy id to localhost
-echo "Taking SSH keygen and "
+echo "Creating SSH keygen and ssh-copy-id "
 ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa <<< y
 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 chmod og-wx ~/.ssh/authorized_keys 
 
 #create a directory to clone thw repo into that directory
-  #mkdir /root/katonic
+sudo mkdir /root/katonic-platform/
 
-#Go to that directory
-  #cd /root/katonic
-
-#git clone https://github.com/katonic-dev/platform_deployment_community.git  /root/katonic/cloudformation/aws/eks-cloudformation/katonic/
 #git clone --branch with-minio https://raj-katonic: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@github.com/katonic-dev/platform_deployment_community.git /root/katonic
-
+git clone --single-branch --branch platform-deployment https://github.com/katonic-dev/platform-deployment-aws.git /root/katonic-platform/
 #cp /deploy.yaml .
-echo "Copying deploy.yaml to your current directory"
-cp platform-deployment/deploy.yaml .
+echo -e "${GREEN}Copying deploy.yaml to your current directory ${ENDCOLOR}"
+cp /root/katonic-platform/platform-deployment-aws/deploy.yaml /root/katonic
 
-#Run the playbook to deploy the platform
-echo "Deploying Platform........................."
-
+#Installing Ansible dependencies
+echo -e "${GREEN}Deploying some ansible dependencies......... ${ENDCOLOR}"
 ansible-galaxy collection install community.general
 ansible-galaxy collection install kubernetes.core
 
-echo "Now platform is deploying..........."
+echo -e "${Yellow}Wait for 1 min${ENDCOLOR}"
 sleep 1m
-
-ansible-playbook -b deploy.yaml
+#Run the playbook to deploy the platform
+echo -e "${GREEN}Now platform is deploying......... ${ENDCOLOR}"
+ansible-playbook -b /root/katonic/deploy.yaml
 
 #Default user creation
 
@@ -586,7 +599,7 @@ ansible-playbook -b deploy.yaml
 dns_external_ip=`kubectl get svc istio-ingressgateway -n istio-system | awk '{print $4}' | tail -n +2`
 echo "Your DNS address: " dns_external_ip
 aws sns publish --topic-arn "$sns_topic_arn" --message "Domain name: $dns_external_ip  Username: $DEFAULT_USER_EMAIL Password:Oe7MU4d9loYV7cV3uzWloQ=="
-echo "Your Katonic platform deployed successfully and the Credentials have mailed"
+echo -e "${BOLDGREEN}Your Katonic platform deployed successfully and the Credentials have mailed ${ENDCOLOR}"
 break
 
 # UPDATE YOUR ./kube
@@ -595,56 +608,61 @@ break
 ###---> aws eks update-kubeconfig --name katonic-cluster-eks --region us-east-1 <---
 ##################################################################
 else
-    echo "Waiting for confirmation after 1 min it will check again your confirmation"
+    echo -e "${Yellow}Waiting for confirmation after 1 min it will check again your confirmation ${ENDCOLOR}"
     sleep 60
 fi
 done
 
 elif  [[ "${choice}" == "2" ]]
 then
-    echo "Setting variable with sns arn"
+    RED="\e[31m"
+    GREEN="\e[32m"
+    BOLDGREEN="\e[1;${GREEN}m"
+    Yellow="\e[33m"
+    ENDCOLOR="\e[0m"
+
+    echo -e "${GREEN}Setting variable with sns arn ${ENDCOLOR}"
     sns_topic_arn=(`aws sns list-topics | grep my-topic -w | sed 's/TopicArn//g'| cut -c 17- | tr -d '"'`)
     echo $sns_topic_arn
 
+    KEY_NAME="katonic_eks"
+    SSHKey="katonic-santosh"
     StackName="katonic-vpc"
     EksClusterStack="eksctl-katonic-cluster-eks-cluster"
     EksClusterNodegroupStack="eksctl-katonic-cluster-eks-nodegroup-worker"
 
     #istioctl x uninstall --purge
-    echo "Deleting sns topic"
+    echo -e "${RED}Deleting sns topic ${ENDCOLOR}"
     aws sns delete-topic --topic-arn $sns_topic_arn
-    echo "Deleting keypairs"
+    echo -e "${RED}Deleting keypairs ${ENDCOLOR}"
     aws ec2 delete-key-pair --key-name katonic-vpc
     aws ec2 delete-key-pair --key-name katonic_eks
-    date
-    echo "Deleting istio services........."
+    echo -e "${RED}Deleting istio services......... ${ENDCOLOR}"
     kubectl delete svc istio-ingressgateway -n istio-system
-    echo "It take some minutes to delete"
+    echo -e "${Yellow}Wait for 3 min${ENDCOLOR}"
     sleep 3m
-    date
-    echo "eks cluster nodegroup stack deleting(it takes some time)............."
+    echo -e "${RED}eks cluster nodegroup stack deleting(it takes some time)......... ${ENDCOLOR}"
     aws cloudformation delete-stack --stack-name ${EksClusterNodegroupStack} --region us-east-1
+    echo -e "${Yellow}Wait for 10 min${ENDCOLOR}"
     sleep 10m
-    date
-    echo "eks cluster stack deleting(it takes some time)............."
+    echo -e "${RED}eks cluster stack deleting(it takes some time)......... ${ENDCOLOR}"
     aws cloudformation delete-stack --stack-name ${EksClusterStack} --region us-east-1
+    echo -e "${Yellow}Wait for 3 min${ENDCOLOR}"
     sleep 3m
-    date
-    echo "katonic vpc deleting(it takes some time)............."
+    echo -e "${RED}katonic vpc deleting(it takes some time)......... ${ENDCOLOR}"
     aws cloudformation delete-stack --stack-name ${StackName} --region us-east-1
+    echo -e "${Yellow}Wait for 3 min${ENDCOLOR}"
     sleep 3m
-    date
-    echo "Remove environment variable"
+    echo -e "${RED}Removing all set environment variable ${ENDCOLOR}"
     unset Env_email_var
     sed -i '/Env_email_var/d' ~/.bashrc
     sed -i '/Env_email_var/d' ~/.profile
     sed -i '/Env_email_var/d' /etc/environment
-    echo "Removing files"
+    echo -e "${RED}Removing all files ${ENDCOLOR}"
     rm vpc.yaml
     rm deploy.yaml
     rm parameters.json
-    echo "Succesfully remove all!!!"
+    echo -e "${BOLDGREEN}Succesfully remove all!!! ${ENDCOLOR}"
 else
-    echo "Not able to deploy"
+    echo -e "${RED}Not able to deploy katonic platform ${ENDCOLOR}"
 fi
-
