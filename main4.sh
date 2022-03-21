@@ -489,6 +489,7 @@ curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s htt
 
 chmod +x ./kubectl
 cp ./kubectl /usr/bin/kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
 mv ./kubectl /root/bin/
 
 # EKSCTL Installation
