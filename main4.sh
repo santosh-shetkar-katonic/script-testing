@@ -102,7 +102,7 @@ node_volume_size="50"
 
 export AWS_DEFAULT_REGION=${Region}
 
-echo -ne "${Bold_Magenta}Please enter your correct email id:  ${ENDCOLOR}"
+echo -ne "${GREEN}Please enter your correct email id:  ${ENDCOLOR}"
 read DEFAULT_USER_EMAIL
 
 echo -e "${GREEN}Your email id is:  $DEFAULT_USER_EMAIL ${ENDCOLOR}"
