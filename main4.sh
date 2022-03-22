@@ -69,8 +69,7 @@ VPCs=$(aws ec2 describe-vpcs --vpc-ids | grep VpcId | grep -oh "vpc-\w*" | wc -l
     else
         echo -e "${BOLDGREEN}You have space in US East(N.Virginia) us-east-1 region to create Katonic VPC!!! ${ENDCOLOR}"
     fi
-#check this link
-#https://ryanstutorials.net/bash-scripting-tutorial/bash-if-statements.php
+
 
 # Update me
 
@@ -81,7 +80,6 @@ StackName="katonic-vpc"
 Bucket="katonic-deployment-update"
 EnableVPCPeering="false"
 EnvType="dev"
-os=$(sudo cat /etc/os-release | grep NAME -w | awk -F '"'  '{print $2}')
 
 
 # EKS
@@ -104,16 +102,9 @@ node_volume_size="50"
 
 export AWS_DEFAULT_REGION=${Region}
 
-
-# echo "Please enter your email id: "
-# read DEFAULT_USER_EMAIL_1
-# echo "Please re-enter your email id: "
-# read DEFAULT_USER_EMAIL_2
-
 echo -ne "${Bold_Magenta}Please enter your correct email id:  ${ENDCOLOR}"
 read DEFAULT_USER_EMAIL
-# echo "Enter [y/n] : "
-# echo yes_or_no
+
 echo -e "${GREEN}Your email id is:  $DEFAULT_USER_EMAIL ${ENDCOLOR}"
 
 echo -e "${GREEN}SNS topic creating.........${ENDCOLOR}"
@@ -541,25 +532,15 @@ eksctl create cluster \
 echo -e "${GREEN}Your katonic eks cluster is ready to deploy katonic platform on it!!!${ENDCOLOR}"
 
 sleep 1m
-#Installing some dependencies to deploy platform
 
-if [[ "${os}" == "Ubuntu" ]]
-then
-    echo "Ubuntu........."
-    sudo apt update -y
-    sudo apt install -y python3 python3-pip
-    sudo apt install ansible -y
-    sudo apt install -y python3 python3-pip
-    pip install  --ignore-installed pyyaml
-    sudo ansible --version
-elif [[ "${os}" == "CentOS Linux" ]]
-then
-    sudo yum update -y
-    sudo yum install epel-release -y
-    sudo yum install -y python3 python3-pip
-    sudo yum install ansible -y
-    sudo ansible --version
-fi
+echo "Ubuntu........."
+sudo apt update -y
+sudo apt install -y python3 python3-pip
+sudo apt install ansible -y
+sudo apt install -y python3 python3-pip
+pip install  --ignore-installed pyyaml
+sudo ansible --version
+
 
 cat > /etc/ansible/hosts << 'EOF'
 [all]
@@ -572,24 +553,11 @@ ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa <<< y
 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 chmod og-wx ~/.ssh/authorized_keys 
 
-#create a directory to clone thw repo into that directory
-echo "Creating directory"
-sudo mkdir /root/katonic-platform
-
-echo "clone repo"
-git clone --single-branch --branch platform-deployment https://santosh-shetkar-katonic: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@github.com/katonic-dev/platform-deployment-aws.git /root/katonic-platform
-#git clone https://raj-katonic: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@github.com/katonic-dev/katonic-ai-pipeline.git {{ master_dir }}/katonic-ai-pipeline
-
-echo -e "${Yellow}Wait for 1 min${ENDCOLOR}"
-sleep 1m
-
-echo -e "${GREEN}Copying deploy.yaml to your current directory ${ENDCOLOR}"
-cp /root/katonic-platform/deploy.yaml /root
-
 #Installing Ansible dependencies
 echo -e "${GREEN}Deploying some ansible dependencies......... ${ENDCOLOR}"
 ansible-galaxy collection install community.general
 ansible-galaxy collection install kubernetes.core
+ansible-galaxy collection install cloud.common
 
 echo -e "${Yellow}Wait for 1 min${ENDCOLOR}"
 sleep 1m
@@ -597,7 +565,6 @@ sleep 1m
 echo -e "${GREEN}Now platform is deploying......... ${ENDCOLOR}"
 ansible-playbook -b /root/deploy.yaml
 
-#Default user creation
 
 #Sending username and password
 dns_external_ip=`kubectl get svc istio-ingressgateway -n istio-system | awk '{print $4}' | tail -n +2`
@@ -606,11 +573,6 @@ aws sns publish --topic-arn "$sns_topic_arn" --message "Domain name: $dns_extern
 echo -e "${BOLDGREEN}Your Katonic platform deployed successfully and the Credentials have mailed ${ENDCOLOR}"
 break
 
-# UPDATE YOUR ./kube
-################################################################
-### MUST ###
-###---> aws eks update-kubeconfig --name katonic-cluster-eks --region us-east-1 <---
-##################################################################
 else
     echo -e "${Yellow}Waiting for confirmation after 1 min it will check again your confirmation ${ENDCOLOR}"
     sleep 60
@@ -666,6 +628,7 @@ then
     rm vpc.yaml
     rm deploy.yaml
     rm parameters.json
+    rm -rf katonic-platform 
     echo -e "${BOLDGREEN}Succesfully remove all!!! ${ENDCOLOR}"
 else
     echo -e "${RED}Not able to deploy katonic platform ${ENDCOLOR}"
