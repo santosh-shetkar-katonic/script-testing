@@ -34,7 +34,7 @@ VPCs=$(aws ec2 describe-vpcs --vpc-ids | grep VpcId | grep -oh "vpc-\w*" | wc -l
           ENDCOLOR="\e[0m"
 
           echo -e "${RED}No space to create katonic VPC's in us-east-1 region. You have already 5 VPC's in us-east-1 region ${ENDCOLOR}"
-          echo -e "${Bold_Magenta}Choose the different region ${ENDCOLOR}"
+          echo -e "${GREEN}Choose the different region ${ENDCOLOR}"
           echo "1. US East(Ohio) us-east-2"
           echo "2. US West(N.California) us-west-1"
           echo "3. US West(Oregon) us-west-2"
@@ -44,30 +44,30 @@ VPCs=$(aws ec2 describe-vpcs --vpc-ids | grep VpcId | grep -oh "vpc-\w*" | wc -l
           if [[ "${region_no}" == 1 ]]
           then
                   region_name=us-east-2
-                  echo -e "${BOLDGREEN}You select US East(Ohio) region ${ENDCOLOR}"
+                  echo -e "${GREEN}You select US East(Ohio) region ${ENDCOLOR}"
           elif [[ "${region_no}" == 2 ]]
           then
                   region_name=us-west-1
-                  echo -e "${BOLDGREEN}You select US West(N.California) region ${ENDCOLOR}"
+                  echo -e "${GREEN}You select US West(N.California) region ${ENDCOLOR}"
           elif [[ "${region_no}" == 3 ]]
           then
                   region_name=us-west-2
-                  echo -e "${BOLDGREEN}You select US West(Oregon) region ${ENDCOLOR}"
+                  echo -e "${GREEN}You select US West(Oregon) region ${ENDCOLOR}"
           elif [[ "${region_no}" == 4 ]]
           then
                   region_name=ap-south-1
-                  echo -e "${BOLDGREEN}You select Asia Pacific(Mumbai) region ${ENDCOLOR}"
+                  echo -e "${GREEN}You select Asia Pacific(Mumbai) region ${ENDCOLOR}"
           elif [[ "${region_no}" == 5 ]]
           then
                   region_name=ap-southeast-2
-                  echo -e "${BOLDGREEN}You select Asia Pacific(Sydney) region ${ENDCOLOR}"
+                  echo -e "${GREEN}You select Asia Pacific(Sydney) region ${ENDCOLOR}"
           else
                   echo -e "${RED}Please select correct number ${ENDCOLOR}"
           fi
           Region="$region_name"
 
     else
-        echo -e "${BOLDGREEN}You have space in US East(N.Virginia) us-east-1 region to create Katonic VPC!!! ${ENDCOLOR}"
+        echo -e "${GREEN}You have space in US East(N.Virginia) us-east-1 region to create Katonic VPC!!! ${ENDCOLOR}"
     fi
 
 
@@ -570,7 +570,7 @@ ansible-playbook -b /root/deploy.yaml
 dns_external_ip=`kubectl get svc istio-ingressgateway -n istio-system | awk '{print $4}' | tail -n +2`
 echo "Your DNS address: " dns_external_ip
 aws sns publish --topic-arn "$sns_topic_arn" --message "Domain name: $dns_external_ip  Username: $DEFAULT_USER_EMAIL Password:Oe7MU4d9loYV7cV3uzWloQ=="
-echo -e "${BOLDGREEN}Your Katonic platform deployed successfully and the Credentials have mailed ${ENDCOLOR}"
+echo -e "${GREEN}Your Katonic platform deployed successfully and the Credentials have mailed ${ENDCOLOR}"
 break
 
 else
@@ -610,7 +610,7 @@ then
     echo -e "${RED}eks cluster nodegroup stack deleting(it takes some time)......... ${ENDCOLOR}"
     aws cloudformation delete-stack --stack-name ${EksClusterNodegroupStack} --region us-east-1
     echo -e "${Yellow}Wait for 10 min${ENDCOLOR}"
-    sleep 10m
+    sleep 7m
     echo -e "${RED}eks cluster stack deleting(it takes some time)......... ${ENDCOLOR}"
     aws cloudformation delete-stack --stack-name ${EksClusterStack} --region us-east-1
     echo -e "${Yellow}Wait for 3 min${ENDCOLOR}"
@@ -629,7 +629,7 @@ then
     rm deploy.yaml
     rm parameters.json
     rm -rf katonic-platform 
-    echo -e "${BOLDGREEN}Succesfully remove all!!! ${ENDCOLOR}"
+    echo -e "${GREEN}Succesfully remove all!!! ${ENDCOLOR}"
 else
     echo -e "${RED}Not able to deploy katonic platform ${ENDCOLOR}"
 fi
