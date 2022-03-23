@@ -34,7 +34,7 @@ VPCs=$(aws ec2 describe-vpcs --vpc-ids | grep VpcId | grep -oh "vpc-\w*" | wc -l
           ENDCOLOR="\e[0m"
 
           echo -e "${RED}No space to create katonic VPC's in us-east-1 region. You have already 5 VPC's in us-east-1 region ${ENDCOLOR}"
-          echo -e "${GREEN}Choose the different region ${ENDCOLOR}"
+          echo -e "${RED}Choose the different region ${ENDCOLOR}"
           echo "1. US East(Ohio) us-east-2"
           echo "2. US West(N.California) us-west-1"
           echo "3. US West(Oregon) us-west-2"
@@ -44,30 +44,30 @@ VPCs=$(aws ec2 describe-vpcs --vpc-ids | grep VpcId | grep -oh "vpc-\w*" | wc -l
           if [[ "${region_no}" == 1 ]]
           then
                   region_name=us-east-2
-                  echo -e "${GREEN}You select US East(Ohio) region ${ENDCOLOR}"
+                  echo -e "${RED}You select US East(Ohio) region ${ENDCOLOR}"
           elif [[ "${region_no}" == 2 ]]
           then
                   region_name=us-west-1
-                  echo -e "${GREEN}You select US West(N.California) region ${ENDCOLOR}"
+                  echo -e "${RED}You select US West(N.California) region ${ENDCOLOR}"
           elif [[ "${region_no}" == 3 ]]
           then
                   region_name=us-west-2
-                  echo -e "${GREEN}You select US West(Oregon) region ${ENDCOLOR}"
+                  echo -e "${RED}You select US West(Oregon) region ${ENDCOLOR}"
           elif [[ "${region_no}" == 4 ]]
           then
                   region_name=ap-south-1
-                  echo -e "${GREEN}You select Asia Pacific(Mumbai) region ${ENDCOLOR}"
+                  echo -e "${RED}You select Asia Pacific(Mumbai) region ${ENDCOLOR}"
           elif [[ "${region_no}" == 5 ]]
           then
                   region_name=ap-southeast-2
-                  echo -e "${GREEN}You select Asia Pacific(Sydney) region ${ENDCOLOR}"
+                  echo -e "${RED}You select Asia Pacific(Sydney) region ${ENDCOLOR}"
           else
                   echo -e "${RED}Please select correct number ${ENDCOLOR}"
           fi
           Region="$region_name"
 
     else
-        echo -e "${GREEN}You have space in US East(N.Virginia) us-east-1 region to create Katonic VPC!!! ${ENDCOLOR}"
+        echo -e "${RED}You have space in US East(N.Virginia) us-east-1 region to create Katonic VPC!!! ${ENDCOLOR}"
     fi
 
 
@@ -75,7 +75,7 @@ VPCs=$(aws ec2 describe-vpcs --vpc-ids | grep VpcId | grep -oh "vpc-\w*" | wc -l
 
 VpcCIDR="10.10.0.0/21"
 PublicSubnets="10.10.0.0/24,10.10.1.0/24,10.10.2.0/24"
-SSHKey="katonic-santosh"
+SSHKey="katonic-vpc"
 StackName="katonic-vpc"
 Bucket="katonic-deployment-update"
 EnableVPCPeering="false"
@@ -551,7 +551,7 @@ EOF
 echo "Creating SSH keygen and ssh-copy-id "
 ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa <<< y
 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
-chmod og-wx ~/.ssh/authorized_keys 
+chmod og-wx ~/.ssh/authorized_keys
 
 #Installing Ansible dependencies
 echo -e "${GREEN}Deploying some ansible dependencies......... ${ENDCOLOR}"
@@ -592,7 +592,7 @@ then
     echo $sns_topic_arn
 
     KEY_NAME="katonic_eks"
-    SSHKey="katonic-santosh"
+    SSHKey="katonic-SSH"
     StackName="katonic-vpc"
     EksClusterStack="eksctl-katonic-cluster-eks-cluster"
     EksClusterNodegroupStack="eksctl-katonic-cluster-eks-nodegroup-worker"
@@ -610,7 +610,7 @@ then
     echo -e "${RED}eks cluster nodegroup stack deleting(it takes some time)......... ${ENDCOLOR}"
     aws cloudformation delete-stack --stack-name ${EksClusterNodegroupStack} --region us-east-1
     echo -e "${Yellow}Wait for 10 min${ENDCOLOR}"
-    sleep 7m
+    sleep 10m
     echo -e "${RED}eks cluster stack deleting(it takes some time)......... ${ENDCOLOR}"
     aws cloudformation delete-stack --stack-name ${EksClusterStack} --region us-east-1
     echo -e "${Yellow}Wait for 3 min${ENDCOLOR}"
@@ -628,7 +628,6 @@ then
     rm vpc.yaml
     rm deploy.yaml
     rm parameters.json
-    rm -rf katonic-platform 
     echo -e "${GREEN}Succesfully remove all!!! ${ENDCOLOR}"
 else
     echo -e "${RED}Not able to deploy katonic platform ${ENDCOLOR}"
