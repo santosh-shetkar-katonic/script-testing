@@ -530,7 +530,7 @@ eksctl create cluster \
   --verbose 3
 
 echo -e "${GREEN}Your katonic eks cluster is ready to deploy katonic platform on it!!!${ENDCOLOR}"
-
+echo -e "${Yellow}Wait for 1 min${ENDCOLOR}"
 sleep 1m
 
 echo "Ubuntu........."
@@ -538,7 +538,7 @@ sudo apt update -y
 sudo apt install -y python3 python3-pip
 sudo apt install ansible -y
 sudo apt install -y python3 python3-pip
-pip install  --ignore-installed pyyaml
+pip install --ignore-installed pyyaml
 sudo ansible --version
 
 
@@ -592,7 +592,7 @@ then
     echo $sns_topic_arn
 
     KEY_NAME="katonic_eks"
-    SSHKey="katonic-SSH"
+    SSHKey="katonic-vpc"
     StackName="katonic-vpc"
     EksClusterStack="eksctl-katonic-cluster-eks-cluster"
     EksClusterNodegroupStack="eksctl-katonic-cluster-eks-nodegroup-worker"
@@ -609,12 +609,22 @@ then
     sleep 3m
     echo -e "${RED}eks cluster nodegroup stack deleting(it takes some time)......... ${ENDCOLOR}"
     aws cloudformation delete-stack --stack-name ${EksClusterNodegroupStack} --region us-east-1
-    echo -e "${Yellow}Wait for 10 min${ENDCOLOR}"
-    sleep 10m
+    echo -e "${Yellow}Deleting Wait for 10 min${ENDCOLOR}"
+    sleep 2m
+    echo -e "${Yellow}Deleting....Please Wait${ENDCOLOR}"
+    sleep 2m
+    echo -e "${Yellow}Deleting....Please Wait${ENDCOLOR}"
+    sleep 2m
+    echo -e "${Yellow}Deleting....Please Wait${ENDCOLOR}"
+    sleep 2m
+    echo -e "${Yellow}Deleting....Please Wait${ENDCOLOR}"
+    sleep 2m
     echo -e "${RED}eks cluster stack deleting(it takes some time)......... ${ENDCOLOR}"
     aws cloudformation delete-stack --stack-name ${EksClusterStack} --region us-east-1
-    echo -e "${Yellow}Wait for 3 min${ENDCOLOR}"
+    echo -e "${Yellow}Wait for 5 min${ENDCOLOR}"
     sleep 3m
+    echo -e "${Yellow}Deleting....Please Wait${ENDCOLOR}"
+    sleep 2m
     echo -e "${RED}katonic vpc deleting(it takes some time)......... ${ENDCOLOR}"
     aws cloudformation delete-stack --stack-name ${StackName} --region us-east-1
     echo -e "${Yellow}Wait for 3 min${ENDCOLOR}"
