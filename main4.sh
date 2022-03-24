@@ -603,9 +603,6 @@ then
     #istioctl x uninstall --purge
     echo -e "${RED}Deleting sns topic ${ENDCOLOR}"
     aws sns delete-topic --topic-arn $sns_topic_arn
-    echo -e "${RED}Deleting keypairs ${ENDCOLOR}"
-    aws ec2 delete-key-pair --key-name katonic-vpc
-    aws ec2 delete-key-pair --key-name katonic_eks
     echo -e "${RED}Deleting istio services......... ${ENDCOLOR}"
     kubectl delete svc istio-ingressgateway -n istio-system
     echo -e "${Yellow}Wait for 3 min${ENDCOLOR}"
@@ -646,6 +643,9 @@ then
     aws cloudformation delete-stack --stack-name ${StackName} --region us-east-1
     echo -e "${Yellow}Wait for 3 min${ENDCOLOR}"
     sleep 3m
+    echo -e "${RED}Deleting keypairs ${ENDCOLOR}"
+    aws ec2 delete-key-pair --key-name katonic-vpc
+    aws ec2 delete-key-pair --key-name katonic_eks
     echo -e "${RED}Removing all set environment variable ${ENDCOLOR}"
     unset Env_email_var
     sed -i '/Env_email_var/d' ~/.bashrc
