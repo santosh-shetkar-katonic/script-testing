@@ -1,6 +1,9 @@
 #!/bin/bash
 #!/usr/bin/env bash
 
+sed -i 's/#   StrictHostKeyChecking yes/    StrictHostKeyChecking no/' /etc/ssh/ssh_config
+systemctl restart sshd
+
 echo "Choose your choice: "
 echo "1. Deploy the katonic platform"
 echo "2. Remove the katonic platform"
