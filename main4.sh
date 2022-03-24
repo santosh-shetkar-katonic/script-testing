@@ -1,7 +1,7 @@
 #!/bin/bash
 #!/usr/bin/env bash
 
-sed -i 's/#   StrictHostKeyChecking yes/    StrictHostKeyChecking no/' /etc/ssh/ssh_config
+sed -i 's/#   StrictHostKeyChecking ask/    StrictHostKeyChecking no/g' /etc/ssh/ssh_config
 systemctl restart sshd
 
 echo "Choose your choice: "
