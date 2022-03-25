@@ -625,14 +625,6 @@ then
     sleep 2m
     echo -e "${Yellow}Deleting....Please Wait${ENDCOLOR}"
     sleep 2m
-    echo -e "${Yellow}Deleting....Please Wait${ENDCOLOR}"
-    sleep 2m
-    echo -e "${Yellow}Deleting....Please Wait${ENDCOLOR}"
-    sleep 2m
-    echo -e "${Yellow}Deleting....Please Wait${ENDCOLOR}"
-    sleep 2m
-    echo -e "${Yellow}Deleting....Please Wait${ENDCOLOR}"
-    sleep 2m
     echo -e "${RED}eks cluster stack deleting(it takes some time)......... ${ENDCOLOR}"
     aws cloudformation delete-stack --stack-name ${EksClusterStack} --region us-east-1
     echo -e "${Yellow}Wait for 5 min${ENDCOLOR}"
